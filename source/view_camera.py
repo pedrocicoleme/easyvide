@@ -8,7 +8,7 @@ import datetime
 
 import imutils
 
-last_frame = u'bunda le le'
+last_frame = u'lele'
 
 fps = 1
 def get_cap(input_resource):
@@ -30,11 +30,11 @@ def view_image(input_resource):
 
         # preparando video
         if not video:
-            print u'vai criar video'
+            print u'creating video...'
             height , width , layers =  frame.shape
 
             fourcc = cv2.cv.CV_FOURCC(*'MJPG')
-            video = cv2.VideoWriter(u'/home/pedro/git/oculusvidentem/video.avi', fourcc, 20.0, (width, height))
+            video = cv2.VideoWriter(u'../video.avi', fourcc, 20.0, (width, height))
 
         video.write(frame)
 
