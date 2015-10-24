@@ -8,7 +8,9 @@ import datetime
 
 import imutils
 
-last_frame = u'lele'
+from collections import deque
+
+framebuffers = {}
 
 fps = 1
 def get_cap(input_resource):
@@ -68,11 +70,16 @@ conf = {
 
 spf = 1.0 / fps
 
-def detect_motion(input_resource):
+def detect_motion(input_resource, sid=u'0'):
     print u'starting detection...'
+
     # initialize the camera and grab a reference to the raw camera capture
     camera = get_cap(input_resource)
-     
+
+    global framebuffers
+    if not sid in framebuffers:
+        framebuffers[sid] = deque([], 10)
+    
     # allow the camera to warmup, then initialize the average frame, last
     # uploaded timestamp, and frame motion counter
     print u'[INFO] warming up...'
@@ -148,9 +155,8 @@ def detect_motion(input_resource):
         clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
         cl1 = clahe.apply(frame2)
 
-        global last_frame
         ret, jpeg = cv2.imencode('.jpg', cl1)
-        last_frame = jpeg.tobytes()
+        framebuffers[sid].appendleft(jpeg.tobytes())
 
         if cv2.waitKey(1) & 0xFF == ord(u'q'):
             break

@@ -21,7 +21,9 @@ def live_stream_helper(source, fps=fps):
 
         last_time = time.time()
         
-        frame = view_camera.last_frame
+        sid = u'0'
+        frame = view_camera.framebuffers[sid][0]
+        #print len(view_camera.framebuffers[sid])
         #frame = camera.get_frame()
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
