@@ -6,6 +6,10 @@ app = Flask(__name__)
 import view_camera
 import time
 
+from camera import camera
+
+app.register_blueprint(camera)
+
 fps = 1
 spf = 1.0 / fps
 
@@ -22,11 +26,12 @@ def live_stream_helper(source, fps=fps):
         last_time = time.time()
         
         sid = u'0'
-        frame = view_camera.framebuffers[sid][0]
-        #print len(view_camera.framebuffers[sid])
-        #frame = camera.get_frame()
-        yield (b'--frame\r\n'
+        try:
+            frame = view_camera.framebuffers[sid][0]
+
+            yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
+        except: pass
 
 @app.route(u'/')
 def index():
@@ -39,4 +44,4 @@ def live_stream(source=None, fps=1):
     return Response(live_stream_helper(source=source, fps=fps), mimetype=u'multipart/x-mixed-replace; boundary=frame')
 
 if __name__ == u'__main__':
-    app.run(debug=True, use_reloader=False)
+    app.run(debug=True, use_reloader=False, threaded=True)

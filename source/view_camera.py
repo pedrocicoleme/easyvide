@@ -46,7 +46,7 @@ def view_image(input_resource):
             break
 
     if video:
-        print u'vai salvar video'
+        print u'saving video'
         video.release()
         video = None
 

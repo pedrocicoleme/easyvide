@@ -1,5 +1,5 @@
   <!DOCTYPE html>
-  <html>
+  <html ng-app="easyvideApp">
     <head>
       <!--Import Google Icon Font-->
       <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -36,27 +36,21 @@
             </nav>
         </header>
 
-        <div class="row">
-            <div class="col s12">
-                <!-- <img id="live_stream_img" data-src="{{ url_for('live_stream', source=0, fps=0.3) }}" /> -->
-            </div>
-            <div class="col s4">
+        <div class="row" ng-controller="CameraListCtrl">
+            <div class="col s4" ng-repeat="camera in cameras">
                 <div class="card hoverable">
                     <div class="card-image waves-effect waves-block waves-light">
-                        <img class="activator" id="live_stream_img" data-src="{{ url_for('live_stream', source=0, fps=0.3) }}" />
+                        <img class="activator" id="live_stream_img" ng-src="[[camera.source]]" />
                     </div>
                     <div class="card-content">
-                        <span class="card-title activator grey-text text-darken-4">Sala de entrada<i class="material-icons right tooltipped" data-tooltip="View last events">more_vert</i></span>
+                        <span class="card-title activator grey-text text-darken-4">[[camera.name]]<i class="material-icons right tooltipped" data-tooltip="View last events">more_vert</i></span>
                         <p><a href="#">View in real time</a><a class="activator grey-text text-darken-4 right tooltipped" href="#" data-tooltip="Edit this camera settings"><i class="material-icons">mode_edit</i></a></p>
                     </div>
                     <div class="card-reveal">
                         {% include 'camera_edit.html' %}
                     </div>
                 </div>
-
             </div>
-            <div class="col s4">This div is 4-columns wide</div>
-            <div class="col s4">This div is 4-columns wide</div>
         </div>
 
         <div class="fixed-action-btn" style="bottom: 45px; right: 24px;">
@@ -74,6 +68,7 @@
         <!--Import jQuery before materialize.js-->
         <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
         <script type="text/javascript" src="static/materialize/js/materialize.min.js"></script>
+        <script type="text/javascript" src="static/js/angular.js"></script>
         <script type="text/javascript" src="static/js/main.js"></script>
     </body>
   </html>
