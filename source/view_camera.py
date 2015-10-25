@@ -73,7 +73,7 @@ conf = {
 spf = 1.0 / fps
 
 def detect_motion(camera):
-    input_resource = camera[u'source']
+    input_resource = int(camera[u'source']) if unicode(camera[u'source']).isdecimal() else camera[u'source']
     sid = u'%s' % camera[u'cameraID']
 
     print u'starting detection...'

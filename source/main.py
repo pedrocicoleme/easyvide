@@ -14,6 +14,8 @@ fps = 1
 spf = 1.0 / fps
 
 def live_stream_helper(cameraID, fps=fps):
+    sid = u'%s' % cameraID
+    
     spf = 1.0 / fps
 
     last_time = time.time()
@@ -25,7 +27,6 @@ def live_stream_helper(cameraID, fps=fps):
 
         last_time = time.time()
         
-        sid = u'%s' % cameraID
         try:
             frame = view_camera.framebuffers[sid][0]
 
