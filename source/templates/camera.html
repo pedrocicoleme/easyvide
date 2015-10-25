@@ -1,0 +1,56 @@
+<div class="col s4" ng-repeat="camera in cameras">
+    <div class="card hoverable">
+        <div class="card-image waves-effect waves-block waves-light">
+            <img class="activator" id="live_stream_img" ng-src="[[camera.source]]" />
+        </div>
+        <div class="card-content">
+            <span class="card-title activator grey-text text-darken-4">[[camera.name]]<i class="material-icons right tooltipped" data-tooltip="View last events">more_vert</i></span>
+            <p><a href="#">View in real time</a><a class="activator grey-text text-darken-4 right tooltipped" href="#" data-tooltip="Edit this camera settings"><i class="material-icons">mode_edit</i></a></p>
+        </div>
+        <div class="card-reveal">
+            <span class="card-title grey-text text-darken-4">Sala de entrada - Settings<i class="material-icons right">close</i></span>
+            <p>Here you can edit the camera settings.</p>
+            <div class="row">
+                <form class="col s12">
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <input placeholder="Camera X" id="camera_name" type="text" class="validate" value="[[camera.name]]">
+                            <label for="camera_name">Name</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <input placeholder="http://example.org/?videostream.cgi" id="camera_source" type="text" class="validate" value="[[camera.source]]>
+                            <label for="camera_source">Source</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s5">
+                            <div class="switch">
+                                <label>
+                                      BW
+                                      <input type="checkbox" id="camera_color">
+                                      <span class="lever"></span>
+                                      Color
+                                </label>
+                            </div>
+                        </div>
+                        <div class="input-field col s5">
+                            <input placeholder="640x480" id="camera_resolution" type="number" class="validate">
+                            <label for="camera_resolution_x">Resolution</label>
+                        </div>
+                        <div class="input-field col s2">
+                            <input placeholder="1" id="camera_fps" type="number" class="validate">
+                            <label for="camera_source">FPS</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <button class="btn waves-effect waves-light right" type="submit" name="camera_submit">Save</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
