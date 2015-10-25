@@ -1,7 +1,7 @@
 <div class="col s4" ng-repeat="camera in cameras">
     <div class="card hoverable">
         <div class="card-image waves-effect waves-block waves-light">
-            <img class="activator" id="live_stream_img" ng-src="[[camera.source]]" />
+            <img class="activator" id="live_stream_img" ng-src="/live_stream/[[camera.cameraID]]/[[camera.fps]]" />
         </div>
         <div class="card-content">
             <span class="card-title activator grey-text text-darken-4">[[camera.name]]<i class="material-icons right tooltipped" data-tooltip="View last events">more_vert</i></span>
@@ -20,7 +20,7 @@
                     </div>
                     <div class="row">
                         <div class="input-field col s12">
-                            <input placeholder="http://example.org/?videostream.cgi" id="camera_source" type="text" class="validate" value="[[camera.source]]>
+                            <input placeholder="http://example.org/?videostream.cgi" id="camera_source" type="text" class="validate" value="/live_stream/[[camera.cameraID]]/[[camera.fps]]">
                             <label for="camera_source">Source</label>
                         </div>
                     </div>

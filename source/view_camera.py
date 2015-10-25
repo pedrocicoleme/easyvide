@@ -10,6 +10,8 @@ import imutils
 
 from collections import deque
 
+from camera import cameras_list
+
 framebuffers = {}
 
 fps = 1
@@ -70,7 +72,10 @@ conf = {
 
 spf = 1.0 / fps
 
-def detect_motion(input_resource, sid=u'0'):
+def detect_motion(camera):
+    input_resource = camera[u'source']
+    sid = u'%s' % camera[u'cameraID']
+
     print u'starting detection...'
 
     # initialize the camera and grab a reference to the raw camera capture
@@ -171,6 +176,7 @@ input_resource = u'http://192.168.1.8:81/videostream.asf?user=admin&password=adm
 from threading import Thread
 from time import sleep
 
-thread = Thread(target=detect_motion, args=(input_resource, ))
-thread.daemon = True
-thread.start()
+for camera in cameras_list:
+    thread = Thread(target=detect_motion, args=(camera, ))
+    thread.daemon = True
+    thread.start()

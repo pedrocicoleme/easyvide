@@ -13,7 +13,7 @@ app.register_blueprint(camera)
 fps = 1
 spf = 1.0 / fps
 
-def live_stream_helper(source, fps=fps):
+def live_stream_helper(cameraID, fps=fps):
     spf = 1.0 / fps
 
     last_time = time.time()
@@ -25,13 +25,14 @@ def live_stream_helper(source, fps=fps):
 
         last_time = time.time()
         
-        sid = u'0'
+        sid = u'%s' % cameraID
         try:
             frame = view_camera.framebuffers[sid][0]
 
             yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
-        except: pass
+        except Exception as e:
+            print e
 
 @app.route(u'/')
 def index():
@@ -39,9 +40,9 @@ def index():
 
 @app.route(u'/live_stream')
 @app.route(u'/live_stream/<int:source>')
-@app.route(u'/live_stream/<int:source>/<float:fps>')
-def live_stream(source=None, fps=1):
-    return Response(live_stream_helper(source=source, fps=fps), mimetype=u'multipart/x-mixed-replace; boundary=frame')
+@app.route(u'/live_stream/<int:cameraID>/<float:fps>')
+def live_stream(cameraID=None, fps=1):
+    return Response(live_stream_helper(cameraID=cameraID, fps=fps), mimetype=u'multipart/x-mixed-replace; boundary=frame')
 
 if __name__ == u'__main__':
     app.run(debug=True, use_reloader=False, threaded=True)
