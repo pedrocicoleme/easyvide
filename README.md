@@ -16,7 +16,7 @@ Thanks for all the help!
 ### Usage
 1. Install OpenCV 2.4 and Python 2.7 - `sudo apt-get install opencv python`
 2. Install Python dependencies - `sudo pip install -r requirements.txt`
-2. Run "python ./src/main.py".
-3. Navigate the browser to the local webpage.
+2. Run `python ./src/main.py`
+3. Go to `http://127.0.0.1:5000/` on your browser.
 
 NOT USABLE YET, SORRY
