@@ -4,7 +4,7 @@
 //     $("#live_stream_img").attr("src",$("#live_stream_img").data("src"));
 // });
 
-var app = angular.module('easyvideApp', ['ui.materialize']);
+var app = angular.module('easyvideApp', ['ui.materialize', 'ngRoute']);
  
 app.config(['$interpolateProvider', function($interpolateProvider) {
     $interpolateProvider.startSymbol('[[');
@@ -20,4 +20,10 @@ app.controller('CameraListCtrl', function ($scope, $http) {
         // log error
         alert('error getting cameras');
     });
+
+    $scope.addCamera = function () {
+        $scope.cameras.push({});
+    };
+
+    // $scope.addCamera();
 });
