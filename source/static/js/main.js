@@ -1,8 +1,9 @@
-// $(document).ready(function(){
-//     $(".button-collapse").sideNav();
+$(document).ready(function(){
+    $(".button-collapse").sideNav();
+    $('.modal-trigger').leanModal();
 
-//     $("#live_stream_img").attr("src",$("#live_stream_img").data("src"));
-// });
+    //$("#live_stream_img").attr("src",$("#live_stream_img").data("src"));
+});
 
 var app = angular.module('easyvideApp', ['ui.materialize', 'ngRoute']);
  
