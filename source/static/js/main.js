@@ -6,13 +6,22 @@ $(document).ready(function(){
 });
 
 var app = angular.module('easyvideApp', ['ui.materialize', 'ngRoute']);
- 
+
+// this way there is no conflict between jinja and angularjs
 app.config(['$interpolateProvider', function($interpolateProvider) {
     $interpolateProvider.startSymbol('[[');
     $interpolateProvider.endSymbol(']]');
 }]);
 
-app.controller('CameraListCtrl', function ($scope, $http) {
+
+app.config(['$routeProvider', function($routeProvider) {
+  $routeProvider.
+    when("/cameras", {templateUrl: "static/partials/cameras.html", controller: "CamerasCtrl"}).
+    when("/drivers/:id", {templateUrl: "partials/driver.html", controller: "driverController"}).
+    otherwise({redirectTo: '/drivers'});
+}]);
+
+app.controller('CamerasCtrl', function ($scope, $http) {
     $http.get('/api/camera/list').
     success(function(data, status, headers, config) {
         $scope.cameras = data['cameras'];
