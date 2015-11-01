@@ -21,18 +21,29 @@ app.config(['$routeProvider', function($routeProvider) {
     otherwise({redirectTo: '/drivers'});
 }]);
 
-app.controller('CamerasCtrl', function ($scope, $http) {
-    $http.get('/api/camera/list').
-    success(function(data, status, headers, config) {
-        $scope.cameras = data['cameras'];
-    }).
-    error(function(data, status, headers, config) {
-        // log error
-        alert('error getting cameras');
-    });
+app.controller('CamerasCtrl', function ($scope, $http, $routeParams) {
+    var init = function () {
+        $scope.loadCameras();
+
+        if ($routeParams.add_new) {
+            $scope.addCamera();
+        }
+    };
+    init();
+
+    $scope.loadCameras = function () {
+        $http.get('/api/camera/list').
+        success(function(data, status, headers, config) {
+            $scope.cameras = data['cameras'];
+        }).
+        error(function(data, status, headers, config) {
+            // log error
+            alert('error getting cameras');
+        });
+    };
 
     $scope.addCamera = function () {
-        $scope.cameras.push({});
+        //$scope.cameras.push({});
     };
 
     // $scope.addCamera();
