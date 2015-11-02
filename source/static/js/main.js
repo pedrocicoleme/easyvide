@@ -44,6 +44,7 @@ app.config(function($stateProvider, $routeProvider) {
 
 app.controller('CamerasCtrl', function($scope, $http, $routeParams) {
     $scope.loadCameras = function () {
+        console.log('retrieving cameras from server');
         $http.get('/api/camera/list').
         success(function(data, status, headers, config) {
             $scope.cameras = data['cameras'];
@@ -54,6 +55,14 @@ app.controller('CamerasCtrl', function($scope, $http, $routeParams) {
         });
     };
 
+    $scope.$on('cameras', function (event, data) {
+        console.log(data); // 'Some data'
+
+        if (data == 'refresh') {
+            $scope.loadCameras();
+        }
+    });
+
     var init = function () {
         $scope.loadCameras();
     };
@@ -63,7 +72,7 @@ app.controller('CamerasCtrl', function($scope, $http, $routeParams) {
 app.controller('CameraNewCtrl', function($scope, $http, $routeParams, $state) {
     var init = function () {
         $('#modal1').openModal({
-            complete: function() { alert('Closed'); $state.go('^'); }
+            complete: function() { alert('Closed'); $state.go('^'); $scope.$emit('cameras', 'refresh'); }
         });
     };
     init();
