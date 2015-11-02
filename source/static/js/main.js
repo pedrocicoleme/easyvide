@@ -1,6 +1,5 @@
 $(document).ready(function(){
     $(".button-collapse").sideNav();
-    $('.modal-trigger').leanModal();
 
     //$("#live_stream_img").attr("src",$("#live_stream_img").data("src"));
 });
@@ -28,10 +27,7 @@ app.config(function($stateProvider, $routeProvider) {
     .state('cameras.add_new', {
         url: '/add_new',
         templateUrl: 'static/partials/cameras.add_new.html',
-        controller: function($scope) {
-            console.log('where is the new camera?');
-            alert('new camera modal should appear');
-        }
+        controller: 'CameraNewCtrl'
     })
     .state('state2', {
         url: "/state2",
@@ -46,8 +42,7 @@ app.config(function($stateProvider, $routeProvider) {
     });
 });
 
-app.controller('CamerasCtrl', function ($scope, $http, $routeParams) {
-    alert('hello, I\'m CamerasCtrl')
+app.controller('CamerasCtrl', function($scope, $http, $routeParams) {
     $scope.loadCameras = function () {
         $http.get('/api/camera/list').
         success(function(data, status, headers, config) {
@@ -59,20 +54,17 @@ app.controller('CamerasCtrl', function ($scope, $http, $routeParams) {
         });
     };
 
-    $scope.addCamera = function () {
-        //$scope.cameras.push({});
-    };
-
-    // $scope.addCamera();
-
     var init = function () {
         $scope.loadCameras();
+    };
+    init();
+});
 
-        if ($routeParams.add_new) {
-            $scope.addCamera();
-        }
-
-        alert('hei');
+app.controller('CameraNewCtrl', function($scope, $http, $routeParams, $state) {
+    var init = function () {
+        $('#modal1').openModal({
+            complete: function() { alert('Closed'); $state.go('^'); }
+        });
     };
     init();
 });
