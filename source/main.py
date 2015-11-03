@@ -41,7 +41,7 @@ def index():
 
 @app.route(u'/live_stream')
 @app.route(u'/live_stream/<int:source>')
-@app.route(u'/live_stream/<int:cameraID>/<float:fps>')
+@app.route(u'/live_stream/<int:cameraID>/<int:fps>')
 def live_stream(cameraID=None, fps=1):
     return Response(live_stream_helper(cameraID=cameraID, fps=fps), mimetype=u'multipart/x-mixed-replace; boundary=frame')
 
