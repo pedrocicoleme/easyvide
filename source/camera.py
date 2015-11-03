@@ -2,6 +2,12 @@
 
 from flask import Blueprint, jsonify
 
+import sqlalchemy
+
+engine = sqlalchemy.create_engine('sqlite:///easyvide.db')
+Session = sessionmaker(bind=engine)
+db = Session()
+
 camera = Blueprint(u'camera', __name__, template_folder=u'templates')
 
 cameras_list = [

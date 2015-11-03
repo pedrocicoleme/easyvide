@@ -13,10 +13,9 @@ app.config(['$interpolateProvider', function($interpolateProvider) {
 }]);
 
 app.config(function($stateProvider, $routeProvider) {
-    //
     // For any unmatched url, redirect to /state1
     $routeProvider.otherwise("/cameras");
-    //
+    
     // Now set up the states
     $stateProvider
     .state('cameras', {
@@ -29,17 +28,6 @@ app.config(function($stateProvider, $routeProvider) {
         templateUrl: 'static/partials/cameras.add_new.html',
         controller: 'CameraNewCtrl'
     })
-    .state('state2', {
-        url: "/state2",
-        templateUrl: "partials/state2.html"
-    })
-    .state('state2.list', {
-        url: "/list",
-        templateUrl: "partials/state2.list.html",
-        controller: function($scope) {
-        $scope.things = ["A", "Set", "Of", "Things"];
-        }
-    });
 });
 
 app.controller('CamerasCtrl', function($scope, $http, $routeParams) {
@@ -72,7 +60,7 @@ app.controller('CamerasCtrl', function($scope, $http, $routeParams) {
 app.controller('CameraNewCtrl', function($scope, $http, $routeParams, $state) {
     var init = function () {
         $('#modal1').openModal({
-            complete: function() { alert('Closed'); $state.go('^'); $scope.$emit('cameras', 'refresh'); }
+            complete: function() { console.log('new camera modal closed'); $state.go('^'); $scope.$emit('cameras', 'refresh'); }
         });
     };
     init();
