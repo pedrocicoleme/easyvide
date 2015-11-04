@@ -4,7 +4,7 @@
 http://blog.pedroleme.com
 
 ### Description
-A streaming server for simple home survelliance with motion detection
+A streaming server for simple home video surveillance with motion detection
 
 ### Credits
 The inspiration for the basic code to stream from flask came from https://github.com/log0/video_streaming_with_flask_example (www.chioka.in). Following are the credits in his readme: Most of the code credits to Miguel Grinberg, except that I made a small tweak. Thanks! http://blog.miguelgrinberg.com/post/video-streaming-with-flask
