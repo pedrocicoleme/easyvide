@@ -40,6 +40,8 @@ def get_run_state(val=None):
     if val != None:
         run_state = val
 
+        check_should_refresh(val)
+
     return run_state
 
 should_refresh_cameras_options = True

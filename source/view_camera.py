@@ -186,7 +186,7 @@ from time import sleep
 def cam_threads_controller():
     while True:
         if get_run_state():
-            if check_should_refresh:
+            if check_should_refresh():
                 for sid, framebuffer in framebuffers.iteritems():
                     framebuffer[u'thread'].join()
 

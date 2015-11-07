@@ -30,7 +30,7 @@ app.config(function($stateProvider, $routeProvider) {
     })
 });
 
-app.controller('AppCtrl', function($scope, $http, $routeParams) {
+app.controller('AppCtrl', function($scope, $rootScope, $http, $routeParams) {
     $scope.setEnableMotion = function() {
         enable = '0';
         if ($scope.enableMotion == true) {
@@ -40,6 +40,8 @@ app.controller('AppCtrl', function($scope, $http, $routeParams) {
         $http.get('/api/state/' + enable).
         success(function(data, status, headers, config) {
             $scope.enableMotion = data['enable_motion'];
+
+            $rootScope.$broadcast('cameras', 'refresh');
         }).
         error(function(data, status, headers, config) {
             // log error
