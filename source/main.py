@@ -28,7 +28,7 @@ def live_stream_helper(cameraID, fps=fps):
         last_time = time.time()
         
         try:
-            frame = view_camera.framebuffers[sid][0]
+            frame = view_camera.framebuffers[sid][u'queue'][0]
 
             yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')

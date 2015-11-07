@@ -31,7 +31,7 @@ app.config(function($stateProvider, $routeProvider) {
 });
 
 app.controller('CamerasCtrl', function($scope, $http, $routeParams) {
-    $scope.loadCameras = function () {
+    $scope.loadCameras = function() {
         console.log('retrieving cameras from server');
         $http.get('/api/camera/list').
         success(function(data, status, headers, config) {
@@ -43,7 +43,43 @@ app.controller('CamerasCtrl', function($scope, $http, $routeParams) {
         });
     };
 
-    $scope.$on('cameras', function (event, data) {
+    $scope.updateCamera = function($index) {
+        console.log($scope.cameras[$index]);
+        $http({
+            url: '/api/camera/' + $scope.cameras[$index]['cameraID'],
+            method: 'PUT',
+            data: JSON.stringify($scope.cameras[$index]),
+            headers: {'Content-Type': 'application/json'}
+        }).
+        success(function(data, status, headers, config) {
+            alert(data.message);
+            
+            $scope.loadCameras();
+        }).
+        error(function(data, status, headers, config) {
+            alert('error during request');
+        });
+    }
+
+    $scope.deleteCamera = function($index) {
+        console.log($scope.cameras[$index]);
+        $http({
+            url: '/api/camera/' + $scope.cameras[$index]['cameraID'],
+            method: 'DELETE',
+            data: JSON.stringify($scope.cameras[$index]),
+            headers: {'Content-Type': 'application/json'}
+        }).
+        success(function(data, status, headers, config) {
+            alert(data.message);
+            
+            $scope.loadCameras();
+        }).
+        error(function(data, status, headers, config) {
+            alert('error during request');
+        });
+    }
+
+    $scope.$on('cameras', function(event, data) {
         console.log(data); // 'Some data'
 
         if (data == 'refresh') {
@@ -51,7 +87,7 @@ app.controller('CamerasCtrl', function($scope, $http, $routeParams) {
         }
     });
 
-    var init = function () {
+    var init = function() {
         $scope.loadCameras();
     };
     init();
@@ -60,8 +96,36 @@ app.controller('CamerasCtrl', function($scope, $http, $routeParams) {
 app.controller('CameraNewCtrl', function($scope, $http, $routeParams, $state) {
     var init = function () {
         $('#modal1').openModal({
-            complete: function() { console.log('new camera modal closed'); $state.go('^'); $scope.$emit('cameras', 'refresh'); }
+            complete: function() { del(); }
         });
     };
     init();
+
+    $scope.addCamera = function() {
+        console.log($scope.camera);
+
+        $http({
+            url: '/api/camera',
+            method: 'POST',
+            data: JSON.stringify($scope.camera),
+            headers: {'Content-Type': 'application/json'}
+        }).
+        success(function(data, status, headers, config) {
+            alert(data.message);
+            del();
+        }).
+        error(function(data, status, headers, config) {
+            alert('error during request');
+        });
+    };
+
+    var del = function() {
+        $('#modal1').closeModal();
+
+        console.log('new camera modal closed');
+
+        $state.go('^');
+
+        $scope.$emit('cameras', 'refresh');
+    }
 });

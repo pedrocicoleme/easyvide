@@ -16,6 +16,7 @@
                     <form class="col s12">
                         <div class="row">
                             <div class="input-field col s12">
+                                <input id="camera_id" type="hidden" class="validate" ng-model="camera.cameraID" />
                                 <input placeholder="Camera X" id="camera_name" type="text" class="validate" ng-model="camera.name" />
                                 <label for="camera_name">Name</label>
                             </div>
@@ -47,8 +48,11 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="input-field col s12">
-                                <button class="btn waves-effect waves-light right" type="submit" name="camera_submit">Save</button>
+                            <div class="input-field col s6 right">
+                                <button class="btn waves-effect waves-light right" type="submit" name="camera_submit" ng-click="updateCamera($index)">Update</button>
+                            </div>
+                            <div class="input-field col s6 left">
+                                <button class="btn waves-effect waves-light right red" type="submit" name="camera_delete" ng-click="deleteCamera($index)">Delete</button>
                             </div>
                         </div>
                     </form>

@@ -2,47 +2,49 @@
 <!-- Modal Structure -->
 <div id="modal1" class="modal">
     <div class="modal-content">
-        <h4>New camera</h4>
-        <p>A bunch of text</p>
-        <form class="col s12">
-            <div class="row">
-                <div class="input-field col s12">
-                    <input placeholder="Camera X" id="camera_name" type="text" class="validate" />
-                    <label for="camera_name">Name</label>
-                </div>
-            </div>
-            <div class="row">
-                <div class="input-field col s12">
-                    <input placeholder="http://example.org/?videostream.cgi" id="camera_source" type="text" class="validate" />
-                    <label for="camera_source">Source</label>
-                </div>
-            </div>
-            <div class="row">
-                <div class="input-field col s5">
-                    <div class="switch">
-                        <label>
-                              BW
-                              <input type="checkbox" id="camera_color" />
-                              <span class="lever"></span>
-                              Color
-                        </label>
+        <h4>Add a new camera</h4>
+        <!-- <p>A bunch of text</p> -->
+        <div class="row">
+            <form class="col s12">
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input placeholder="Camera X" id="camera_name" type="text" class="validate" ng-model="camera.name" />
+                        <label class="active" for="camera_name">Name</label>
                     </div>
                 </div>
-                <div class="input-field col s5">
-                    <input placeholder="640x480" id="camera_resolution" type="text" class="validate" />
-                    <label for="camera_resolution_x">Resolution</label>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input placeholder="http://example.org/?videostream.cgi" id="camera_source" type="text" class="validate" ng-model="camera.source" />
+                        <label class="active" for="camera_source">Source</label>
+                    </div>
                 </div>
-                <div class="input-field col s2">
-                    <input placeholder="1" id="camera_fps" type="number" class="validate" />
-                    <label for="camera_source">FPS</label>
+                <div class="row">
+                    <div class="input-field col s5">
+                        <div class="switch">
+                            <label>
+                                  BW
+                                  <input type="checkbox" id="camera_color" ng-model="camera.color" />
+                                  <span class="lever"></span>
+                                  Color
+                            </label>
+                        </div>
+                    </div>
+                    <div class="input-field col s5">
+                        <input placeholder="640x480" id="camera_resolution" type="text" class="validate" ng-model="camera.resolution" />
+                        <label class="active" for="camera_resolution_x">Resolution</label>
+                    </div>
+                    <div class="input-field col s2">
+                        <input placeholder="1" id="camera_fps" type="number" class="validate" ng-model="camera.fps" />
+                        <label class="active" for="camera_source">FPS</label>
+                    </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="input-field col s12">
-                    <button class="btn waves-effect waves-light right" type="submit" name="camera_submit">Save</button>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <button class="btn waves-effect waves-light right" type="submit" name="camera_submit" ng-click="addCamera()">Create</button>
+                    </div>
                 </div>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
     <!-- <div class="modal-footer">
         <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Agree</a>

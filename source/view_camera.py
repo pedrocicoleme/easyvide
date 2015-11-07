@@ -10,7 +10,7 @@ import imutils
 
 from collections import deque
 
-from camera import cameras_list
+from camera import get_cameras_list, should_run, check_should_refresh
 
 framebuffers = {}
 
@@ -82,8 +82,6 @@ def detect_motion(camera):
     camera = get_cap(input_resource)
 
     global framebuffers
-    if not sid in framebuffers:
-        framebuffers[sid] = deque([], 10)
     
     # allow the camera to warmup, then initialize the average frame, last
     # uploaded timestamp, and frame motion counter
@@ -161,9 +159,9 @@ def detect_motion(camera):
         cl1 = clahe.apply(frame2)
 
         ret, jpeg = cv2.imencode('.jpg', cl1)
-        framebuffers[sid].appendleft(jpeg.tobytes())
+        framebuffers[sid][u'queue'].appendleft(jpeg.tobytes())
 
-        if cv2.waitKey(1) & 0xFF == ord(u'q'):
+        if not should_run or check_should_refresh():
             break
 
 #input_resource = u'http://192.168.1.8:81/videostream.cgi?user=admin&password=admin&rate=2&x=.mjpeg'
@@ -176,7 +174,29 @@ input_resource = u'http://192.168.1.8:81/videostream.asf?user=admin&password=adm
 from threading import Thread
 from time import sleep
 
-for camera in cameras_list:
-    thread = Thread(target=detect_motion, args=(camera, ))
-    thread.daemon = True
-    thread.start()
+def cam_threads_controller():
+    while True:
+        if should_run:
+            if check_should_refresh:
+                check_should_refresh(False)
+
+                for sid, framebuffer in framebuffers.iteritems():
+                    framebuffer[u'thread'].join()
+
+                for camera in get_cameras_list():
+                    sid = u'%s' % camera[u'cameraID']
+
+                    if not sid in framebuffers.keys():
+                        framebuffers[sid] = {u'thread': None, u'queue': deque([], 10)}
+
+                    framebuffers[sid][u'thread'] = Thread(target=detect_motion, args=(camera, ))
+                    framebuffers[sid][u'thread'].daemon = True
+                    framebuffers[sid][u'thread'].start()
+            else:
+                time.sleep(1)
+        else:
+            time.sleep(1)
+
+threads_master = Thread(target=cam_threads_controller)
+threads_master.daemon = True
+threads_master.start()
