@@ -30,6 +30,36 @@ app.config(function($stateProvider, $routeProvider) {
     })
 });
 
+app.controller('AppCtrl', function($scope, $http, $routeParams) {
+    $scope.setEnableMotion = function() {
+        enable = '0';
+        if ($scope.enableMotion == true) {
+            enable = '1';
+        }
+
+        $http.get('/api/state/' + enable).
+        success(function(data, status, headers, config) {
+            $scope.enableMotion = data['enable_motion'];
+        }).
+        error(function(data, status, headers, config) {
+            // log error
+            alert('error getting state');
+        });
+    }
+
+    var init = function() {
+        $http.get('/api/state').
+        success(function(data, status, headers, config) {
+            $scope.enableMotion = data['enable_motion'];
+        }).
+        error(function(data, status, headers, config) {
+            // log error
+            alert('error getting state');
+        });
+    }
+    init();
+});
+
 app.controller('CamerasCtrl', function($scope, $http, $routeParams) {
     $scope.loadCameras = function() {
         console.log('retrieving cameras from server');

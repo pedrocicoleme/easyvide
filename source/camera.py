@@ -33,7 +33,14 @@ camera = Blueprint(u'camera', __name__, template_folder=u'templates')
 #     {u'cameraID': 0, u'name': u'Sala de Entrada', u'source': u'http://192.168.1.8:81/videostream.asf?user=admin&password=admin', u'fps': 1, u'color': False, u'resolution': u'640x480'},
 #     {u'cameraID': 1, u'name': u'Notebook', u'source': u'0', u'fps': 1, u'color': True, u'resolution': u'640x480'}]
 
-should_run = True
+run_state = True
+def get_run_state(val=None):
+    global run_state
+
+    if val != None:
+        run_state = val
+
+    return run_state
 
 should_refresh_cameras_options = True
 def check_should_refresh(val=None):
@@ -57,6 +64,17 @@ def get_cameras_list():
         cameras_list.append(cam)
 
     return cameras_list
+
+@camera.route(u'/api/state')
+@camera.route(u'/api/state/<int:state>')
+def set_get_state(state=None):
+    if state != None:
+        get_run_state(True if int(state) == 1 else False)
+    
+    state = {
+        u'enable_motion': get_run_state()}
+    
+    return jsonify(**state)
 
 @camera.route(u'/api/camera/list')
 def index():

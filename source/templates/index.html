@@ -16,9 +16,9 @@
                 <div class="nav-wrapper">
                     <a href="#!" class="center brand-logo">EasyViːde</a>
                     <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
-                    <div class="switch right">
+                    <div class="switch right" ng-controller="AppCtrl">
                         <label>
-                            <input type="checkbox">
+                            <input type="checkbox" ng-model="enableMotion" ng-change="setEnableMotion()">
                             <span class="lever"></span>
                         </label>
                     </div>

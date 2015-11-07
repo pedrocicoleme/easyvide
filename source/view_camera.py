@@ -10,7 +10,7 @@ import imutils
 
 from collections import deque
 
-from camera import get_cameras_list, should_run, check_should_refresh
+from camera import get_cameras_list, get_run_state, check_should_refresh
 
 framebuffers = {}
 
@@ -161,7 +161,7 @@ def detect_motion(camera):
         ret, jpeg = cv2.imencode('.jpg', cl1)
         framebuffers[sid][u'queue'].appendleft(jpeg.tobytes())
 
-        if not should_run or check_should_refresh():
+        if not get_run_state() or check_should_refresh():
             break
 
 #input_resource = u'http://192.168.1.8:81/videostream.cgi?user=admin&password=admin&rate=2&x=.mjpeg'
@@ -176,7 +176,7 @@ from time import sleep
 
 def cam_threads_controller():
     while True:
-        if should_run:
+        if get_run_state():
             if check_should_refresh:
                 check_should_refresh(False)
 
