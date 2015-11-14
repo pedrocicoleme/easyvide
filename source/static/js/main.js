@@ -44,7 +44,6 @@ app.controller('AppCtrl', function($scope, $rootScope, $http, $routeParams) {
             $rootScope.$broadcast('cameras', 'refresh');
         }).
         error(function(data, status, headers, config) {
-            // log error
             alert('error getting state');
         });
     }
