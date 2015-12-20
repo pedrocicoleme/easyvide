@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import logging
+
 import numpy as np
 import cv2
 
@@ -73,6 +75,8 @@ conf = {
 spf = 1.0 / fps
 
 def detect_motion(camera):
+    global framebuffers
+
     input_resource = int(camera[u'source']) if unicode(camera[u'source']).isdecimal() else camera[u'source']
     sid = u'%s' % camera[u'cameraID']
 
@@ -82,8 +86,6 @@ def detect_motion(camera):
         try:
             # initialize the camera and grab a reference to the raw camera capture
             camera = get_cap(input_resource)
-
-            global framebuffers
             
             # allow the camera to warmup, then initialize the average frame, last
             # uploaded timestamp, and frame motion counter
@@ -109,6 +111,14 @@ def detect_motion(camera):
                 last_time = time.time()
 
                 grabbed, frame = camera.read()
+
+                if not grabbed:
+                    framebuffers[sid][u'status'] = False
+
+                    time.sleep(3)
+                    break
+                else:
+                    framebuffers[sid][u'status'] = True
 
                 timestamp = datetime.datetime.now()
                 text = u'Unoccupied'
@@ -166,7 +176,9 @@ def detect_motion(camera):
                 if not get_run_state() or check_should_refresh():
                     break
         except Exception as e:
-            print e
+            logging.exception(u'error trying to get picture')
+
+            framebuffers[sid][u'status'] = False
 
             time.sleep(1)
 

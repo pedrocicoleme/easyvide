@@ -146,3 +146,40 @@ def delete_camera(cameraID):
     result[u'message'] = u'Camera deleted'
     
     return jsonify(**result)
+
+fps = 1
+spf = 1.0 / fps
+
+def live_stream_helper(cameraID, fps=fps):
+    sid = u'%s' % cameraID
+    
+    spf = 1.0 / fps
+
+    last_time = time.time()
+
+    while True:
+        sleep_interval = spf - (time.time() - last_time)
+        if sleep_interval > 0:
+            time.sleep(sleep_interval)
+
+        last_time = time.time()
+        
+        try:
+            if view_camera.framebuffers[sid][u'status']:
+                frame = view_camera.framebuffers[sid][u'queue'][0]
+
+                yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
+            else:
+                time.sleep(1)
+        except Exception as e:
+            logging.exception(u'error sending frame via http')
+
+        if not get_run_state() or check_should_refresh():
+            break
+
+@camera.route(u'/live_stream')
+@camera.route(u'/live_stream/<int:source>')
+@camera.route(u'/live_stream/<int:cameraID>/<int:fps>')
+def live_stream(cameraID=None, fps=1):
+    return Response(live_stream_helper(cameraID=cameraID, fps=fps), mimetype=u'multipart/x-mixed-replace; boundary=frame')
