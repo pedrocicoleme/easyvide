@@ -16,6 +16,18 @@ from camera import get_cameras_list, get_run_state, check_should_refresh
 
 framebuffers = {}
 
+class Camera(object):
+    def __init__(self):
+        self.cap = None
+        self.queue_capture = deque([], 10)
+        pass
+
+    def __del__(self):
+        pass
+
+    def get_cap(self):
+
+
 fps = 1
 def get_cap(input_resource):
     cap = cv2.VideoCapture(input_resource)

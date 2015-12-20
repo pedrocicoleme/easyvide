@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, Response
+
+import time, logging
+import view_camera
 
 from sqlalchemy import create_engine, Table, MetaData
 from sqlalchemy.orm import scoped_session, sessionmaker
