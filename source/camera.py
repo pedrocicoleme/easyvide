@@ -179,6 +179,8 @@ class Camera(Thread):
                     else:
                         self.status = True
 
+                    self.queue_capture.appendleft(frame)
+
                     timestamp = datetime.datetime.now()
                     text = u'Unoccupied'
                  
@@ -223,12 +225,13 @@ class Camera(Thread):
                         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
                         text = u'Occupied'
 
-                        if len(self.queue_analysis) == self.queue_analysis.maxlen:
+                        if len(self.queue_capture) == self.queue_capture.maxlen:
                             now_occupied = True
 
                     if now_occupied:
                         occupied = True
                     else:
+                        occupied = False
                         if was_occupied:
                             self.make_a_video()
 
@@ -271,32 +274,56 @@ class Camera(Thread):
         self.block_video = True
         print u'making a video!'
 
-        queue_copy = list(self.queue_analysis)
-
-        print u'there are %s images, should be %s' % (len(queue_copy), len(self.queue_analysis))
+        queue_copy = list(self.queue_capture)
 
         # images are grayscale, so...
         layers = 1
-        height, width = queue_copy[0].shape
+        height, width, layers = queue_copy[0].shape
 
         print queue_copy[0].shape
 
+        video_filename = '/home/pedro/video%s.avi' % (int(round(time.time() * 1000)))
+
         video = cv2.VideoWriter()
-        video.open('/home/pedro/video%s.avi' % (int(round(time.time() * 1000))), cv2.cv.CV_FOURCC(*'XVID'), self.fps, (width, height), False)
+        video.open(video_filename, cv2.cv.CV_FOURCC(*'XVID'), self.fps, (width, height), True)
 
         for img in reversed(queue_copy):
             video.write(img)
 
         video.release()
 
-        #self.block_video = False
+        import subprocess
+
+        dir = video_filename.strip(".avi")
+        command = "avconv -i %s.avi -c:v libx264 -c:a copy %s.mp4" % (dir, dir)
+
+        process = subprocess.Popen(command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        stdout, stderr = process.communicate()
+
+        self.block_video = False
 
         print u'video finished'
+
+        #send_video_via_telegram(video_filename.replace('avi', 'mp4'))
 
         return True
 
     def run(self):
         self.detect_motion()
+
+def send_video_via_telegram(filename):
+    import telegram
+
+    bot = telegram.Bot(token='token')
+
+    print bot.getMe()
+
+    chat_id = bot.getUpdates()[-1].message.chat_id
+
+    bot.sendMessage(chat_id=chat_id, text="We found a suspect motion, see the video")
+
+    bot.sendVideo(chat_id=chat_id, video=open(filename, 'rb'))
+
 
 #input_resource = u'http://192.168.1.8:81/videostream.cgi?user=admin&password=admin&rate=2&x=.mjpeg'
 #input_resource = u'rtsp://admin:admin@192.168.1.8:81/h.264.sdp?x=tcp'
