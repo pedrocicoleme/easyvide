@@ -113,6 +113,7 @@ class Camera(Thread):
 
         self.queue_capture = deque([], 10*self.fps)
         self.queue_analysis = deque([], 10*self.fps)
+        self.queue_web = deque([], 10*self.fps)
 
         self.block_video = False
 
@@ -181,6 +182,9 @@ class Camera(Thread):
 
                     self.queue_capture.appendleft(frame)
 
+                    ret, jpeg = cv2.imencode('.jpg', frame)
+                    self.queue_web.appendleft(jpeg.tobytes())
+
                     timestamp = datetime.datetime.now()
                     text = u'Unoccupied'
                  
@@ -233,7 +237,8 @@ class Camera(Thread):
                     else:
                         occupied = False
                         if was_occupied:
-                            self.make_a_video()
+                            pass
+                            #self.make_a_video()
 
                     # draw the text and timestamp on the frame
                     ts = timestamp.strftime(u'%A %d %B %Y %H:%M:%S')
@@ -454,7 +459,7 @@ def live_stream_helper(cameraID, fps=1):
         
         try:
             if running_cameras[sid].status:
-                frame = running_cameras[sid].queue_analysis[0]
+                frame = running_cameras[sid].queue_web[0]
 
                 yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
