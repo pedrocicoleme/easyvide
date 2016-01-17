@@ -114,6 +114,8 @@ class Camera(Thread):
         self.queue_capture = deque([], 10*self.fps)
         self.queue_analysis = deque([], 10*self.fps)
 
+        self.block_video = False
+
         self.status = False
 
     def __del__(self):
@@ -136,6 +138,8 @@ class Camera(Thread):
     #@profile
     def detect_motion(self):
         print u'starting detection for cameraID %s...' % self.cameraID
+
+        was_occupied = occupied = False
 
         while True:
             try:
@@ -203,7 +207,10 @@ class Camera(Thread):
                     thresh = cv2.threshold(frameDelta, conf[u'delta_thresh'], 255, cv2.THRESH_BINARY)[1]
                     thresh = cv2.dilate(thresh, None, iterations=2)
                     (cnts, _) = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+                    was_occupied = occupied
                  
+                    now_occupied = False
                     # loop over the contours
                     for c in cnts:
                         # if the contour is too small, ignore it
@@ -215,7 +222,16 @@ class Camera(Thread):
                         (x, y, w, h) = cv2.boundingRect(c)
                         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
                         text = u'Occupied'
-                 
+
+                        if len(self.queue_analysis) == self.queue_analysis.maxlen:
+                            now_occupied = True
+
+                    if now_occupied:
+                        occupied = True
+                    else:
+                        if was_occupied:
+                            self.make_a_video()
+
                     # draw the text and timestamp on the frame
                     ts = timestamp.strftime(u'%A %d %B %Y %H:%M:%S')
                     cv2.putText(frame, u'Room Status: {}'.format(text), (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
@@ -228,8 +244,10 @@ class Camera(Thread):
                     clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
                     cl1 = clahe.apply(frame2)
 
-                    ret, jpeg = cv2.imencode('.jpg', cl1)
-                    self.queue_analysis.appendleft(jpeg.tobytes())
+                    # ret, jpeg = cv2.imencode('.jpg', cl1)
+                    # self.queue_analysis.appendleft(jpeg.tobytes())
+
+                    self.queue_analysis.appendleft(cl1)
 
                     if not get_run_state() or check_should_refresh():
                         break
@@ -245,6 +263,37 @@ class Camera(Thread):
 
         self.cap.release()
         self.cap = None
+
+    def make_a_video(self):
+        if self.block_video:
+            return True
+
+        self.block_video = True
+        print u'making a video!'
+
+        queue_copy = list(self.queue_analysis)
+
+        print u'there are %s images, should be %s' % (len(queue_copy), len(self.queue_analysis))
+
+        # images are grayscale, so...
+        layers = 1
+        height, width = queue_copy[0].shape
+
+        print queue_copy[0].shape
+
+        video = cv2.VideoWriter()
+        video.open('/home/pedro/video%s.avi' % (int(round(time.time() * 1000))), cv2.cv.CV_FOURCC(*'XVID'), self.fps, (width, height), False)
+
+        for img in reversed(queue_copy):
+            video.write(img)
+
+        video.release()
+
+        #self.block_video = False
+
+        print u'video finished'
+
+        return True
 
     def run(self):
         self.detect_motion()
