@@ -20,6 +20,8 @@ running_cameras = {}
 engine = create_engine('sqlite:///easyvide.db', convert_unicode=True)
 db = scoped_session(sessionmaker(bind=engine))
 
+cv2.setUseOptimized(True)
+
 camera_table_sql = u"""
 CREATE TABLE IF NOT EXISTS camera (
     cameraID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
@@ -88,7 +90,7 @@ conf = {
     u'min_upload_second': 3.0,
     u'min_motion_frames': 1,
     u'camera_warmup_time': 2.5,
-    u'delta_thresh': 10,
+    u'delta_thresh': 20,
     u'resolution': [640, 480],
     u'fps': 3,
     u'min_area': 1000}
@@ -127,9 +129,11 @@ class Camera(Thread):
             input_resource = self.source
 
         self.cap = cv2.VideoCapture(input_resource)
+        self.cap.set(cv2.cv.CV_CAP_PROP_FPS, 2)
 
         return self.cap
 
+    #@profile
     def detect_motion(self):
         print u'starting detection for cameraID %s...' % self.cameraID
 
@@ -177,6 +181,9 @@ class Camera(Thread):
                     # resize the frame, convert it to grayscale, and blur it
                     frame = imutils.resize(frame, width=500)
                     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+                    # equalize histogram
+                    gray = cv2.equalizeHist(gray)
                     gray = cv2.GaussianBlur(gray, (21, 21), 0)
                  
                     # if the average frame is None, initialize it
@@ -360,6 +367,9 @@ def live_stream_helper(cameraID, fps=1):
     last_time = time.time()
 
     while True:
+        if not get_run_state() or check_should_refresh():
+            break
+            
         sleep_interval = spf - (time.time() - last_time)
         if sleep_interval > 0:
             time.sleep(sleep_interval)
@@ -376,9 +386,6 @@ def live_stream_helper(cameraID, fps=1):
                 time.sleep(1)
         except Exception as e:
             logging.exception(u'error sending frame via http')
-
-        if not get_run_state() or check_should_refresh():
-            break
 
 @camera.route(u'/live_stream')
 @camera.route(u'/live_stream/<int:source>')
